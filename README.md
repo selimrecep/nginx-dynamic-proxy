@@ -111,5 +111,5 @@ Todo list:
 - [x] CloudFlare support (Reversing IP Back)
 - [x] Dynamically adding/removing websitse
 - [x] More specific configuration file support website by website
-- [ ] NGINX Stats support
+- [x] NGINX Stats support (Added through dynamic serverblock confs.)
 

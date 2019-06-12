@@ -85,9 +85,8 @@ class ConfigManager {
                     return reject(new FSError(err.message));
                 if (preproxyConf !== false)
                     fs.writeFileSync(this.PATH_SITES_EXTRA + "/" + domain + "/preproxy.conf", preproxyConf);
-
                 if (serverblockConf !== false)
-                    fs.writeFileSync(this.PATH_SITES_EXTRA + "/" + domain + "/serverblockConf.conf", serverblockConf);
+                    fs.writeFileSync(this.PATH_SITES_EXTRA + "/" + domain + "/serverblock.conf", serverblockConf);
                 var cmds = JSON.parse(JSON.stringify(this.commands));
 
                 for (var k in cmds) {

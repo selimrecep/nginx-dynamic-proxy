@@ -19,14 +19,25 @@ var dom = "saydir.alicanyildiz.net";
 var oldDom = "sad51.recepselim.com"; // Old
 var zoneName = "habsay";
 var ip = "34.90.30.187"
+
+var baseSB = "profiles/serverBlock";
+var sbPaths = fs.readdirSync(baseSB);
+var serverBlock = "";
+
+for(var k in sbPaths){
+  var path = sbPaths[k];
+  var conf = fs.readFileSync(baseSB + "/" + path);
+  serverBlock += conf + "\n";
+}
+
 var settings = [25, 10, dom, "http", ip, 80, zoneName, 5, 50];
 /*cm.removeSite(oldDom).then((res) => {
   log(res, true);*/
-  cm.addSite(settings, "", "", true).then((res) => {
-    log(res, true);
-  }).catch((err) => {
-    log(err, false);
-  });
+cm.addSite(settings, "", serverBlock, true).then((res) => {
+  log(res, true);
+}).catch((err) => {
+  log(err, false);
+});
 /*}).catch((err) => {
   log(err, false);
 });*/

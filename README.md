@@ -31,6 +31,8 @@ Then copy inside of setup folder to `/etc/nginx` folder (Thanks to Nginxconfig.i
 > openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 2048
 > mkdir -p /var/www/_letsencrypt
 > chown www-data /var/www/_letsencrypt
+> sudo mkdir /etc/nginx/sites
+> sudo mkdir /etc/nginx/sites-enabled
 ~~~
 
 And _after you added your first website_ run this:
@@ -108,6 +110,6 @@ If you find any bug, please open an issuse from issues tab.
 Todo list:
 - [x] CloudFlare support (Reversing IP Back)
 - [x] Dynamically adding/removing websitse
-- [ ] More specific configuration file support website by website
+- [x] More specific configuration file support website by website
 - [ ] NGINX Stats support
 

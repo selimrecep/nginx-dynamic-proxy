@@ -1,7 +1,8 @@
 const { exec } = require('child_process');
+const rimraf = require("rimraf");
 const fs = require("fs");
 const { FSError, CommandExecutionError, MissingParamsError } = require("./errors/Errors");
-const LETS_ENCRYPT_BASE = "/etc/letsencrypt/live";
+const LETS_ENCRYPT_BASE = "/etc/letsencrypt";
 const NGINX_RELOAD_COMMAND = "sudo nginx -t && sudo systemctl reload nginx";
 /**
  * Class for managing configs of nginx
@@ -12,12 +13,14 @@ class ConfigManager {
      * Constructor 
      * @public
      * @param {String} PATH_SITES_ENABLED Path to enabled sites of nginx
+     * @param {String} PATH_SITES_EXTRA Path to conf files of enabled sites of nginx
      * @param {String} DEFAULT_SITE_SCHEME  Default config scheme of website 
      * @param {string[]} commands Array of commands
      * @param {String} mail Lets Encrypt mailing E-Mail
      */
-    constructor(PATH_SITES_ENABLED, DEFAULT_SITE_SCHEME, commands, mail) {
+    constructor(PATH_SITES_ENABLED, PATH_SITES_EXTRA, DEFAULT_SITE_SCHEME, commands, mail) {
         this.PATH_SITES_ENABLED = PATH_SITES_ENABLED;
+        this.PATH_SITES_EXTRA = PATH_SITES_EXTRA;
         this.DEFAULT_SITE_SCHEME = DEFAULT_SITE_SCHEME;
         this.commands = commands;
         this.mail = mail;
@@ -30,7 +33,7 @@ class ConfigManager {
     removeSite(dom) {
         return new Promise((resolve, reject) => {
             var base = LETS_ENCRYPT_BASE;
-            if (fs.existsSync(base + "/" + dom)) {
+            if (fs.existsSync(base + "/live/" + dom)) {
                 if (fs.existsSync(base + "/" + dom + "/fullchain.pem"))
                     fs.unlinkSync(base + "/" + dom + "/fullchain.pem")
                 if (fs.existsSync(base + "/" + dom + "/privkey.pem"))
@@ -38,7 +41,15 @@ class ConfigManager {
                 if (fs.existsSync(base + "/" + dom + "/chain.pem"))
                     fs.unlinkSync(base + "/" + dom + "/chain.pem")
             }
+            if (fs.existsSync(base + "/archive" + dom))
+                rimraf.sync(base + "/archive" + dom);
+            if (fs.existsSync(base + "/renewal" + dom))
+                rimraf.sync(base + "/renewal" + dom);
 
+            if (fs.existsSync(this.PATH_SITES_EXTRA + "/" + dom)) {
+                rimraf.sync(this.PATH_SITES_EXTRA + "/" + dom);
+            } /*else
+                reject(new FSError("Configuration folder is missing"));*/
             if (fs.existsSync(this.PATH_SITES_ENABLED + "/" + dom + ".conf")) {
                 fs.unlinkSync(this.PATH_SITES_ENABLED + "/" + dom + ".conf");
                 this._runCommand(NGINX_RELOAD_COMMAND, [NGINX_RELOAD_COMMAND], 0, (output, isError) => {
@@ -55,9 +66,15 @@ class ConfigManager {
      * Addes a website dynamically.
      * @public
      * @param {Array} arr Settings of new website 
+     * @param {string} preproxyConf Configuration before proxy_pass
+     * @param {string} serverblockConf Configuration of server (You can put location /a { ... })
+     * @param {boolean} passSSL If you have already created SSL use this to not get banned.
      * @returns {Promise} Promise of callback
      */
-    addSite(arr) {
+    addSite(arr, preproxyConf, serverblockConf, passSSL) {
+        passSSL = (defined(passSSL)) ? passSSL : false;
+        preproxyConf = (defined(preproxyConf)) ? preproxyConf : false;
+        serverblockConf = (defined(serverblockConf)) ? serverblockConf : false;
         return new Promise((resolve, reject) => {
             if (arr.length < 6)
                 return reject(new MissingParamsError("At least 6 params are required"));
@@ -66,7 +83,11 @@ class ConfigManager {
             this._addConfigFile(conf, domain, (err) => {
                 if (err)
                     return reject(new FSError(err.message));
+                if (preproxyConf !== false)
+                    fs.writeFileSync(this.PATH_SITES_EXTRA + "/" + domain + "/preproxy.conf", preproxyConf);
 
+                if (serverblockConf !== false)
+                    fs.writeFileSync(this.PATH_SITES_EXTRA + "/" + domain + "/serverblockConf.conf", serverblockConf);
                 var cmds = JSON.parse(JSON.stringify(this.commands));
 
                 for (var k in cmds) {
@@ -76,13 +97,15 @@ class ConfigManager {
                     cmd = cmd.replace(regDom, domain);
                     cmd = cmd.replace(regMail, this.mail);
                     cmds[k] = cmd;
+                    if(passSSL && cmds[k].includes("certbot"))
+                        cmds[k] = "echo skipped";
                 }
 
                 this._runCommand(cmds[0], cmds, 0, (output, isError) => {
                     if (isError)
                         return reject(new CommandExecutionError(output));
                     resolve(output);
-                })
+                }, "")
             })
         })
     }
@@ -122,7 +145,19 @@ class ConfigManager {
      * @param {Function} cb Callback
      */
     _addConfigFile(conf, domain, cb) {
+        if (!fs.existsSync(this.PATH_SITES_ENABLED))
+            fs.mkdirSync(this.PATH_SITES_ENABLED);
+
+        if (!fs.existsSync(this.PATH_SITES_EXTRA))
+            fs.mkdirSync(this.PATH_SITES_EXTRA);
+
         var path = this.PATH_SITES_ENABLED + "/" + domain + ".conf";
+        var dir = this.PATH_SITES_EXTRA + "/" + domain;
+        if (!fs.existsSync(dir))
+            fs.mkdirSync(dir);
+
+        fs.writeFileSync(dir + "/preproxy.conf", "");
+        fs.writeFileSync(dir + "/serverblock.conf", "");
         fs.writeFile(path, conf, "utf8", (err) => {
             cb(err)
         });

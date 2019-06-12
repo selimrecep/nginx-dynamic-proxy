@@ -1,0 +1,23 @@
+{
+  "name": "nginx-dynamic-proxy",
+  "version": "1.0.0",
+  "description": "This repository is for creating website configurations for ngnix.",
+  "main": "siteAdder.js",
+  "dependencies": {
+    "rimraf": "^2.6.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node siteAdder.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/selimrecep/nginx-dynamic-proxy.git"
+  },
+  "author": "selimrecep",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/selimrecep/nginx-dynamic-proxy/issues"
+  },
+  "homepage": "https://github.com/selimrecep/nginx-dynamic-proxy#readme"
+}

@@ -1,0 +1,5 @@
+sed -i -r 's/(listen \[::\]:443)/listen [::]:999;#_#\1/g;  s/(listen 443)/listen 999;#_#\1/g; s/(ssl_(certificate|certificate_key|trusted_certificate) )/#;#\1/g' /etc/nginx/sites-enabled/{domain}.conf
+sudo nginx -t && sudo systemctl reload nginx
+certbot certonly --webroot -d {domain} -d www.{domain} --email {mail} -w /var/www/_letsencrypt -n --agree-tos --force-renewal
+sed -i -r 's/(listen \[::\]:999;#_#)//g;  s/(listen 999;#_#)//g;  s/#?;#//g' /etc/nginx/sites-enabled/{domain}.conf
+sudo nginx -t && sudo systemctl reload nginx

@@ -49,10 +49,10 @@ const DEFAULT_SITE_SCHEME = fs.readFileSync("scheme.conf", "utf8");
 const commands = fs.readFileSync("command.txt", "utf8").split("\r\n");
 const mail = "info@example.com";
 ~~~
-_PATH_SITES_ENABLED_ is the directory that stores configuration files.
-_DEFAULT_SITE_SCHEME_ is path to default configuration file that will be used for future websites.
-_commands_ is an string array that is needed to be run element by element to setup new website.
-_mail_ is needed for confirming your website by LetsEncrypt SSL
+_PATH_SITES_ENABLED_ is the directory that stores configuration files.   
+_DEFAULT_SITE_SCHEME_ is path to default configuration file that will be used for future websites.  
+_commands_ is an string array that is needed to be run element by element to setup new website.  
+_mail_ is needed for confirming your website by LetsEncrypt SSL  
 
 Then setup your configuration manager.
 

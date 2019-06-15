@@ -2,6 +2,9 @@
 The aim is to manage your nginx in nodeJS language. You can use it like an API. 
 _Note:_ Because of base configuration, you can only access HTTPS of this website. But you can use a HTTP or HTTPS Backend.  
 Also it supports **DoS/DDoS protection** (by software). 
+
+![photo](https://i.ibb.co/GVYJ23k/Screenshot-20190615-221727-Termius.jpg)
+
 ## Installing nginx to your CentOS Server
 You can install nginx to other distros. too but I am going to tell it in CentOS,
 Run this command to add nginx repo: 

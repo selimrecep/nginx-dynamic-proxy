@@ -105,6 +105,11 @@ if($_SERVER["REMOTE_ADDR"] === "YOUR_PROXY_IP"){ // You should be sure that clie
 // Then you can do what you want about visitor's IP.
 ~~~
 
+#Commmand Line Usage (Easy Way)
+Just run `sudo node siteAdder.js`. Then choose the action that you want. (I recommend you to only touch settings domain, backend protocol, backend port, backend ip etc. )
+
+**Note:** Try to not use same domain many times for creating cert. You can be get banned for 1 week.
+
 If you find any bug, please open an issuse from issues tab. 
 
 Todo list:
@@ -112,5 +117,6 @@ Todo list:
 - [x] Dynamically adding/removing websitse
 - [x] More specific configuration file support website by website
 - [x] NGINX Stats support (Added through dynamic serverblock confs.)
+- [x] Terminal GUI
 
 Web Proxy/NGINX Configuration manager NodeJS Part made by selimrecep

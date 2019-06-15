@@ -154,7 +154,7 @@ const askQuestionsAdd = () => {
     {
       name: "ADD_SSL",
       type: "input",
-      message: "Have you ever added SSL for this domain?",
+      message: "Have you ever added SSL for this domain? (IN THIS MACHINE)",
       default: false,
       list : [false, true]
     }

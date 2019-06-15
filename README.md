@@ -46,7 +46,7 @@ And _after you added your first website_ run this:
 
 Then you are ready to use your script.
 
-# Usage
+# Usage (Long Way)
 ## Server settings
 First run `npm install`
 Then set basic server settings to build your server.

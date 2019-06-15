@@ -28,9 +28,11 @@ class ConfigManager {
     /**
      * Removes a website dynamically.
      * @param {String} dom Domain
+     * @param {boolean} noThrow Don't throw error
      * @returns {Promise} Promise of result
      */
-    removeSite(dom) {
+    removeSite(dom, noThrow) {
+        noThrow = (defined(noThrow )) ? noThrow : false;
         return new Promise((resolve, reject) => {
             var base = LETS_ENCRYPT_BASE;
             if (fs.existsSync(base + "/live/" + dom)) {
@@ -53,13 +55,21 @@ class ConfigManager {
             if (fs.existsSync(this.PATH_SITES_ENABLED + "/" + dom + ".conf")) {
                 fs.unlinkSync(this.PATH_SITES_ENABLED + "/" + dom + ".conf");
                 this._runCommand(NGINX_RELOAD_COMMAND, [NGINX_RELOAD_COMMAND], 0, (output, isError) => {
-                    if (isError)
+                    if (isError && !noThrow)
                         return reject(new CommandExecutionError(output));
                     resolve(output);
                 })
-            } else
+            } else if(!noThrow)
                 reject(new FSError("Configuration file is missing"));
         });
+    }
+    /**
+     * Checks if thewebsite exists
+     * @param {String} domain Domain of the website to check
+     * @returns {boolean} If exists or not
+     */
+    siteExists(domain){
+        return fs.existsSync(this.PATH_SITES_ENABLED + "/" + domain + ".conf");
     }
 
     /**
@@ -79,6 +89,7 @@ class ConfigManager {
             if (arr.length < 6)
                 return reject(new MissingParamsError("At least 6 params are required"));
             var domain = arr[2];
+            this.removeSite(domain, true);
             var conf = this._getConf.apply(this, arr);
             this._addConfigFile(conf, domain, (err) => {
                 if (err)

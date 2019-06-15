@@ -72,7 +72,7 @@ var ip = "123.123.123.123" // This is IP that will be our backend.
 
 var settings = [10, 10, dom, "https", ip, 443, zoneName, 5, 15]; // You can be confused with these values. You will understand them while you are coding (JSDoc). And you can look into scheme.conf then compare the variable names and values.
 ~~~
-
+(Be sure that you have configured your DNS settings)
 And then add your website
  
 ~~~javascript
@@ -113,3 +113,4 @@ Todo list:
 - [x] More specific configuration file support website by website
 - [x] NGINX Stats support (Added through dynamic serverblock confs.)
 
+Web Proxy/NGINX Configuration manager NodeJS Part made by selimrecep

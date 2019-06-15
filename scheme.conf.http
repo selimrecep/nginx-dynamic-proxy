@@ -1,0 +1,38 @@
+
+limit_req_zone $remote_addr zone={zone}:{rate_limit} rate={rate_pr};
+
+# HTTP redirect
+server {
+	listen 80;
+	listen [::]:80;
+
+	server_name .{domain};
+
+	include nginxconfig.io/letsencrypt.conf;
+	location / {
+		limit_req zone={zone} burst={dynBurst};
+		include sites/{domain}/preproxy.conf;
+		proxy_pass {passProtocol}://{passIP}:{passPort};
+		include nginxconfig.io/proxy.conf;
+
+	}
+
+	location ~* \.(?:css(\.map)?|js(\.map)?|swf|jpe?g|png|gif|ico|cur|heic|webp|tiff?|mp3|m4a|aac|ogg|midi?|wav|mp4|mov|webm|mpe?g|avi|ogv|flv|wmv)$ {
+		expires 7d;
+		access_log off;
+		limit_req zone={zone} burst={staBurst};
+		include sites/{domain}/preproxy.conf;
+		proxy_pass {passProtocol}://{passIP}:{passPort};
+		include nginxconfig.io/proxy.conf;
+	}
+
+	location ~* \.(?:svgz?|ttf|ttc|otf|eot|woff2?)$ {
+		add_header Access-Control-Allow-Origin "*";
+ 		expires 7d;
+		access_log off;
+		limit_req zone={zone} burst={staBurst};
+		include sites/{domain}/preproxy.conf;
+		proxy_pass {passProtocol}://{passIP}:{passPort};
+		include nginxconfig.io/proxy.conf;
+	}
+}

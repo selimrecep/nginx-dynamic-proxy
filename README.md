@@ -11,6 +11,7 @@ Run this command to add nginx repo:
 ~~~shell
 > sudo nano /etc/yum.repos.d/nginx.repo
 > sudo yum install nginx
+> sudo yum install certbot
 ~~~
 Then add this:
 ~~~

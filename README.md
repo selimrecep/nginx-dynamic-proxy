@@ -34,6 +34,7 @@ Then copy inside of setup folder to `/etc/nginx` folder (Thanks to Nginxconfig.i
 ~~~shell
 > openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 2048
 > mkdir -p /var/www/_letsencrypt
+> adduser www-data
 > chown www-data /var/www/_letsencrypt
 > sudo mkdir /etc/nginx/sites
 > sudo mkdir /etc/nginx/sites-enabled
